@@ -5,6 +5,8 @@ import {useState} from 'react'
 function App() {
 
     const [searchSymbol, setSearchSymbol] = useState('');
+    const [stockName, setStockName] = useState();
+    const [stockPrice, setStockPrice] = useState();
 
     const updateSearchSymbol = async (ev) => {
         setSearchSymbol(ev.currentTarget.value)
@@ -13,6 +15,13 @@ function App() {
     const searchStock = async () => {
         console.log('This is where we make an API call to the backend to fetch the price and other information about the stock')
         console.log('Once the information comes back from the backend API, display it on the UI')
+        console.log('the user typed in this symbol', searchSymbol)
+        let res = await fetch(`http://localhost:3000/api/search/${searchSymbol}`)
+        res = await res.json()
+        setStockName(searchSymbol)
+        setStockPrice(res.data.price)
+        setSearchSymbol('')
+        console.log('res returned back from the backend API is', res)
     };
 
 
@@ -38,12 +47,13 @@ function App() {
                 </div>
 
 
-                <div className={'flex mt-8 ml-2 gap-24 justify-start'}>
-                    <h1 className={'text-3xl'}>BHP - BHP Group Limited</h1>
+                {stockName && <div className={'flex mt-8 ml-2 gap-24 justify-start'}>
+                    <h1 className={'text-3xl'}>{stockName}</h1>
+                    <h2 className={'text-sm'}>${stockPrice}</h2>
 
                     <button className={'px-8 py-2 bg-blue-600 text-white font-semibold text-xl rounded'}>Buy</button>
 
-                </div>
+                </div>}
 
 
 
