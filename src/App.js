@@ -8,6 +8,8 @@ function App() {
     const [stockName, setStockName] = useState();
     const [stockPrice, setStockPrice] = useState();
 
+    const [buyValue, setBuyValue] = useState('');
+
     const updateSearchSymbol = async (ev) => {
         setSearchSymbol(ev.currentTarget.value)
     };
@@ -16,13 +18,25 @@ function App() {
         console.log('This is where we make an API call to the backend to fetch the price and other information about the stock')
         console.log('Once the information comes back from the backend API, display it on the UI')
         console.log('the user typed in this symbol', searchSymbol)
-        // let res = await fetch(`http://localhost:3000/api/search/${searchSymbol}`)
-        let res = await fetch(`https://calm-meadow-20175.herokuapp.com/api/search/${searchSymbol}`)
+        let res = await fetch(`http://localhost:3000/api/search/${searchSymbol}`)
+        // let res = await fetch(`https://calm-meadow-20175.herokuapp.com/api/search/${searchSymbol}`)
         res = await res.json()
         setStockName(searchSymbol)
         setStockPrice(res.data.price)
         setSearchSymbol('')
         console.log('res returned back from the backend API is', res)
+    };
+
+    const buyStock = async () => {
+        let res = await fetch('http://localhost:3000/api/portfolio', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: JSON.stringify({buyValue, stockName, stockPrice})
+        })
+
     };
 
 
@@ -52,7 +66,10 @@ function App() {
                     <h1 className={'text-3xl'}>{stockName}</h1>
                     <h2 className={'text-sm'}>${stockPrice}</h2>
 
-                    <button className={'px-8 py-2 bg-blue-600 text-white font-semibold text-xl rounded'}>Buy</button>
+                    <input type="text" value={buyValue} onChange={(event) => setBuyValue(event.currentTarget.value)} className={'border'}/>
+                    {buyValue}
+
+                    <button onClick={buyStock} className={'px-8 py-2 bg-blue-600 text-white font-semibold text-xl rounded'}>Buy</button>
 
                 </div>}
 
